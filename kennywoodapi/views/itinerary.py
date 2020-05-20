@@ -14,7 +14,7 @@ class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
             view_name='itinerary',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'starttime', 'attraction', 'customer')
+        fields = ('id', 'url', 'starttime', 'attraction', 'customer_id')
         depth = 1
 
 
@@ -23,9 +23,9 @@ class Itineraries(ViewSet):
     def create(self, request):
      
         newitinerary = Itinerary()
+        newitinerary.starttime = request.data["starttime"]
         newitinerary.attraction_id = request.data["attraction_id"]
         newitinerary.customer_id = request.data["customer_id"]
-        newitinerary.starttime = request.data["starttime"]
         newitinerary.save()
 
         serializer = ItinerarySerializer(newitinerary, context={'request': request})
@@ -42,9 +42,9 @@ class Itineraries(ViewSet):
 
     def update(self, request, pk=None):
         itinerary = Itinerary.objects.get(pk=pk)
+        itinerary.starttime = request.data["starttime"]
         itinerary.attraction_id = request.data["attraction_id"]
         itinerary.customer_id = request.data["customer_id"]
-        itinerary.starttime = request.data["starttime"]
         itinerary.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
