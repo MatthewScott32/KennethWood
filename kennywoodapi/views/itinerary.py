@@ -3,7 +3,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from kennywoodapi.models import Itinerary
+from kennywoodapi.models import Itinerary, Attraction, ParkArea, Customer
 
 
 class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
@@ -21,6 +21,9 @@ class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
 class Itineraries(ViewSet):
 
     def create(self, request):
+        
+        attraction = Attraction.objects.get(pk=request.data["attraction_id"])
+        customer = Customer.objects.get(user=request.auth.user)
      
         newitinerary = Itinerary()
         newitinerary.starttime = request.data["starttime"]
@@ -63,6 +66,8 @@ class Itineraries(ViewSet):
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def list(self, request):
+        
+        # customer = Customer.objects.get(user=request.auth.user)
         itineraries = Itinerary.objects.all()
         serializer = ItinerarySerializer(
             itineraries, many=True, context={'request': request})
